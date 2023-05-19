@@ -15,7 +15,7 @@ int main(int argc, char** argv) {
     TaxiAssignmentInstance instance2;
 
     for (int j = 0; j < n_sizes.size(); j++) {
-        for(int i=0; i<5; i++) 
+        for(int i=0; i<10; i++) 
         {
             std::string filename = "input/" + n_sizes[j] + "_" + std::to_string(i) + ".csv";
 
@@ -26,6 +26,7 @@ int main(int argc, char** argv) {
 
             batchingSolver.solve();
             greedySolver.solve();
+
             TaxiAssignmentSolution solutionBatching = batchingSolver.getSolution();
             TaxiAssignmentSolution solutionGreedy = greedySolver.getSolution();
 

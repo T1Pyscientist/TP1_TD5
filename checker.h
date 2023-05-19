@@ -14,14 +14,15 @@ class TaxiAssignmentChecker
         TaxiAssignmentChecker();
 
         bool checkFeasibility(const TaxiAssignmentInstance &instance, const TaxiAssignmentSolution &solution);
-        void getFeasibilityStatus();
-        bool getSolutionCost(const TaxiAssignmentInstance &instance, const TaxiAssignmentSolution &solution);
+        int getFeasibilityStatus();
+        double getSolutionCost(const TaxiAssignmentInstance &instance, const TaxiAssignmentSolution &solution);
   
 
 	
 	private:
         int n_constraints = 3;
         std::vector<bool> _feasibility_status;
+        
 
         bool _checkValuesInRange(const TaxiAssignmentInstance &instance, const TaxiAssignmentSolution &solution);
         bool _checkPaxUnique(const TaxiAssignmentInstance &instance, const TaxiAssignmentSolution &solution);

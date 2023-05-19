@@ -1,5 +1,6 @@
 #include "greedy_solver.h"
 #include <chrono>
+#include "checker.h"
 
 GreedySolver::GreedySolver() {}
 
@@ -46,8 +47,10 @@ void GreedySolver::solve() {
     this->_solution_time = double(duration);
 
     // TODO: VER QUE ES EL STATUS
-    this->_solution_status = 1;
-
+    TaxiAssignmentChecker checker = TaxiAssignmentChecker();
+    checker.checkFeasibility(this->_instance, this->_solution);
+    this->_solution_status = checker.getFeasibilityStatus();
+    
 }
 
 double GreedySolver::getObjectiveValue() const {
