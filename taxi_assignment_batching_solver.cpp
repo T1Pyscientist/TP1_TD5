@@ -27,13 +27,13 @@ void BatchingSolver::solve() {
 
     // Obtain the solution, construct the corresponding object and record the desired parameters.
     if (this->_solution_status == operations_research::MinCostFlow::OPTIMAL) {
-        this->_objective_value = double(this->_min_cost_flow.OptimalCost()) / 10;  // Divido por diez porque al armar el grafo los pesos se multiplicaron por 10
+        this->_objective_value = double(this->_min_cost_flow.OptimalCost());  // Divido por diez porque al armar el grafo los pesos se multiplicaron por 10
         
         for (int i = 0; i < this->_min_cost_flow.NumArcs(); ++i) {
             int64_t flow = this->_min_cost_flow.Flow(i);
             if (flow == 0) continue;
             // PROBLEMAS CON LA MEMORIA AL ASIGNAR A INSTANCIA DE SOLUCION
-            // this->_solution.assign(this->_min_cost_flow.Tail(i), this->_min_cost_flow.Head(i));
+            this->_solution.assign(this->_min_cost_flow.Tail(i), this->_min_cost_flow.Head(i)-this->_instance.n);
         }
     } else {
         std::cout << "Solving the min cost flow problem failed. Solver status: "

@@ -33,6 +33,7 @@ int main(int argc, char** argv) {
             std::cout << n_sizes[j] << "\t" << greedySolver.getSolutionTime() << "\t" << batchingSolver.getSolutionTime()
             << "\t" << greedySolver.getObjectiveValue() << "\t" <<batchingSolver.getObjectiveValue()
             << std::endl;
+            std::cout<< batchingSolver.getSolution() <<std::endl;
         }
     }
 
