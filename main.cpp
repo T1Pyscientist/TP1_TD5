@@ -5,11 +5,14 @@
 #include "taxi_assignment_batching_solver.h"
 #include "min_cost_flow_solver.h"
 
+#include <fstream>
 
 int main(int argc, char** argv) {
     std::vector<std::string> n_sizes = {"xl", "large", "medium", "small"};
 
-    std::cout << "size\ttimeG\ttimeB\tObjValG\tObjValB" << std::endl; 
+    std::fstream file;
+    file.open ("results.csv");
+    file << "size,n,timeG,timeB,ObjValG,ObjValB,PrecioKmG,PrecioKmB" << std::endl; 
 
     TaxiAssignmentInstance instance1;
     TaxiAssignmentInstance instance2;
@@ -30,12 +33,16 @@ int main(int argc, char** argv) {
             TaxiAssignmentSolution solutionBatching = batchingSolver.getSolution();
             TaxiAssignmentSolution solutionGreedy = greedySolver.getSolution();
 
-            std::cout << n_sizes[j] << "\t" << greedySolver.getSolutionTime() << "\t" << batchingSolver.getSolutionTime()
-            << "\t" << greedySolver.getObjectiveValue() << "\t" <<batchingSolver.getObjectiveValue()
+            file << n_sizes[j] << "," <<instance1.n << "," << greedySolver.getSolutionTime() << "," << batchingSolver.getSolutionTime()
+            << "," << greedySolver.getObjectiveValue() << "," <<batchingSolver.getObjectiveValue() 
+            << "," << greedySolver.getPrecioKm() << "," << batchingSolver.getKmDolar()
             << std::endl;
-            std::cout<< batchingSolver.getSolution() <<std::endl;
         }
     }
+
+
+    file.close();
+
 
     return 0;
 }

@@ -8,6 +8,7 @@ BatchingSolver::BatchingSolver(TaxiAssignmentInstance &instance) {
     this->_objective_value = 0;
     this->_solution_status = 0;
     this->_solution_time = 0;
+    this->_km_dolar = 0;
 }
 
 void BatchingSolver::setInstance(TaxiAssignmentInstance &instance) {
@@ -32,8 +33,8 @@ void BatchingSolver::solve() {
         for (int i = 0; i < this->_min_cost_flow.NumArcs(); ++i) {
             int64_t flow = this->_min_cost_flow.Flow(i);
             if (flow == 0) continue;
-            // PROBLEMAS CON LA MEMORIA AL ASIGNAR A INSTANCIA DE SOLUCION
             this->_solution.assign(this->_min_cost_flow.Tail(i), this->_min_cost_flow.Head(i)-this->_instance.n);
+            this->_km_dolar += this->_instance.dist[this->_min_cost_flow.Tail(i)][this->_min_cost_flow.Head(i)-this->_instance.n] / this->_instance.pax_tot_fare[this->_min_cost_flow.Head(i)-this->_instance.n];
         }
     } else {
         std::cout << "Solving the min cost flow problem failed. Solver status: "
@@ -63,6 +64,10 @@ int BatchingSolver::getSolutionStatus() const {
 
 double BatchingSolver::getSolutionTime() const {
     return this->_solution_time;
+}
+
+double BatchingSolver::getKmDolar() const  {
+    return this->_km_dolar /  this->_instance.n;
 }
 
 

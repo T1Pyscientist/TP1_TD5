@@ -21,6 +21,7 @@ class GreedySolver
         TaxiAssignmentSolution getSolution() const;
         int getSolutionStatus() const;
         double getSolutionTime() const;
+        double getPrecioKm() const;
         
         
 	
@@ -31,6 +32,7 @@ class GreedySolver
         double _objective_value;
         int _solution_status;
         double _solution_time;
+        double _precio_km;
 
 };
 

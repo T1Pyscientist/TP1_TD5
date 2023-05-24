@@ -9,6 +9,7 @@ GreedySolver::GreedySolver(TaxiAssignmentInstance &instance) {
     this->_objective_value = 0;
     this->_solution_status = 0;
     this->_solution_time = 0;
+    this->_precio_km = 0;
 }
 
 void GreedySolver::setInstance(TaxiAssignmentInstance &instance) {
@@ -37,6 +38,7 @@ void GreedySolver::solve() {
         }
         this->_solution.assign(conductor, j);
         this->_objective_value += min;
+        this->_precio_km += (min / this->_instance.pax_tot_fare[j]);
     }
 
     // Registrar el tiempo de finalización
@@ -46,7 +48,6 @@ void GreedySolver::solve() {
     int64_t duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
     this->_solution_time = double(duration);
 
-    // TODO: VER QUE ES EL STATUS
     TaxiAssignmentChecker checker = TaxiAssignmentChecker();
     checker.checkFeasibility(this->_instance, this->_solution);
     this->_solution_status = checker.getFeasibilityStatus();
@@ -67,6 +68,10 @@ int GreedySolver::getSolutionStatus() const {
 
 double GreedySolver::getSolutionTime() const {
     return this->_solution_time;
+}
+
+double GreedySolver::getPrecioKm() const{
+    return this->_precio_km / this->_instance.n;
 }
 
 
