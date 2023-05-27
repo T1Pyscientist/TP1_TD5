@@ -23,10 +23,8 @@ class GreedySolver
         double getSolutionTime() const;
         double getPrecioKm() const;
         
-        
 	
 	private:
-        // Instance, problem and results attributes
         TaxiAssignmentInstance _instance;
         TaxiAssignmentSolution _solution;
         double _objective_value;

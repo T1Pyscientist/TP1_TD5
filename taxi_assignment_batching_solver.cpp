@@ -70,7 +70,6 @@ double BatchingSolver::getKmDolar() const  {
     return this->_km_dolar /  this->_instance.n;
 }
 
-
 void BatchingSolver::_createMinCostFlowNetwork() {
 
     // Initialize graph structures.

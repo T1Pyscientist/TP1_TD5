@@ -22,6 +22,7 @@ class BatchingSolver
         TaxiAssignmentSolution getSolution() const;
         int getSolutionStatus() const;
         double getSolutionTime() const;
+        double getKmDolar() const;
         
         
 	
@@ -37,6 +38,7 @@ class BatchingSolver
         double _objective_value;
         int _solution_status;
         double _solution_time;
+        double _km_dolar;
 
 };
 

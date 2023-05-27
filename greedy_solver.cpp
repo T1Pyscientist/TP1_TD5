@@ -2,6 +2,7 @@
 #include <chrono>
 #include "checker.h"
 
+
 GreedySolver::GreedySolver() {}
 
 GreedySolver::GreedySolver(TaxiAssignmentInstance &instance) {
@@ -16,38 +17,54 @@ void GreedySolver::setInstance(TaxiAssignmentInstance &instance) {
     this->_instance = instance;
 }
 
+
+/*
+* For a given instance, finds an assigment solution
+* --------------------- 
+* It finds the closest car for each passenger, in the order
+* of arriving requests
+*/
 void GreedySolver::solve() {
 
+    // Initial execution time
     auto start = std::chrono::high_resolution_clock::now();
 
+    // Instantiate solution
     this->_solution = TaxiAssignmentSolution(this->_instance.n);
 
-
+    // Loop over each requests j
     for (int j = 0; j < this->_instance.n; j++)
     {
-        double min = std::numeric_limits<double>::infinity();
-        int conductor = 0;
+        // Find the closest available car
+        double min_dist = std::numeric_limits<double>::infinity();
+        int closest_car = 0;
         for (int i = 0; i < this->_instance.n; i++)
-        {
+        {   
+            // Check car is not assigned already and update
             if (!this->_solution.isTaxiAssigned(i)) {
-                if(this->_instance.dist[i][j] < min) {
-                    min  = this->_instance.dist[i][j];
-                    conductor = i;
+                if(this->_instance.dist[i][j] < min_dist) {
+                    min_dist  = this->_instance.dist[i][j];
+                    closest_car = i;
                 }
             }
         }
-        this->_solution.assign(conductor, j);
-        this->_objective_value += min;
-        this->_precio_km += (min / this->_instance.pax_tot_fare[j]);
+
+        // Assign closest car to request j in the solution
+        this->_solution.assign(closest_car, j);
+
+        // Set metrics of the assignment  
+        this->_objective_value += min_dist;
+        this->_precio_km += (min_dist / this->_instance.pax_tot_fare[j]);
     }
 
-    // Registrar el tiempo de finalización
+    // Final execution time
     auto end = std::chrono::high_resolution_clock::now();
 
-    // Calcular la duración en milisegundos
+    // Set execution time for the algorithm
     int64_t duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
     this->_solution_time = double(duration);
 
+    // Check feasibility of the solution
     TaxiAssignmentChecker checker = TaxiAssignmentChecker();
     checker.checkFeasibility(this->_instance, this->_solution);
     this->_solution_status = checker.getFeasibilityStatus();

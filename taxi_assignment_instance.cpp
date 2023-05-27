@@ -1,20 +1,19 @@
 #include "taxi_assignment_instance.h"
 
 void split(std::string &str, char &delim, std::vector<std::string> &out) {
-            // create a stream from the string  
-            std::stringstream s(str);  
-              
-            std::string s2;  
-            while (std::getline(s, s2, delim) )  
-            {  
-                out.push_back(s2); // store the string in s2  
-            } 
+    // create a stream from the string  
+    std::stringstream s(str);  
+        
+    std::string s2;  
+    while (std::getline(s, s2, delim) )  
+    {  
+        out.push_back(s2); // store the string in s2  
+    } 
 }
 
 TaxiAssignmentInstance::TaxiAssignmentInstance() {}
 
 TaxiAssignmentInstance::TaxiAssignmentInstance(std::string filename) {
-
     this->ReadFromFile(filename);
 }
 
