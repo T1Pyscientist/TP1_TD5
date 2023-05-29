@@ -1,5 +1,5 @@
-#ifndef TAXI_ASSIGNMENT_BATCHING_SOLVER_H
-#define TAXI_ASSIGNMENT_BATCHING_SOLVER_H
+#ifndef TAXI_ASSIGNMENT_BATCHING_SOLVER_RATIO_H
+#define TAXI_ASSIGNMENT_BATCHING_SOLVER_RATIO_H
 
 #include <cstdint>
 #include <vector>
@@ -9,11 +9,11 @@
 #include "ortools/graph/min_cost_flow.h"
 
 
-class BatchingSolver
+class BatchingSolverRatio
 {
 	public:
-        BatchingSolver();
-        BatchingSolver(TaxiAssignmentInstance &instance);
+        BatchingSolverRatio();
+        BatchingSolverRatio(TaxiAssignmentInstance &instance);
 
         void setInstance(TaxiAssignmentInstance &instance);
         void solve();
@@ -29,8 +29,7 @@ class BatchingSolver
 	private:
         // Completar con lo que sea necesario.
         operations_research::SimpleMinCostFlow _min_cost_flow;
-        void _createMinCostFlowNetwork();
-        void _createMinCostFlowNetwork2();
+        void _createMinCostFlowNetworkRatio();
 
 
         // Instance, problem and results attributes
@@ -40,6 +39,7 @@ class BatchingSolver
         int _solution_status;
         double _solution_time;
         std::vector<double> _ratio_precio_km;
+
 };
 
 #endif

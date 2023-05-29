@@ -43,13 +43,20 @@ void TaxiAssignmentInstance::ReadFromFile(std::string filename) {
     }
 
     // Read passenger information.
+    double epsilon = 0.1;
     for (int i = 0; i < this->n; i++) {
         std::string line;
         input_file >> line;
         std::vector<std::string> elems;
         split(line, delim, elems);
         this->pax_position[i] = std::make_pair<double, double>(std::stod(elems[0]), std::stod(elems[1]));
-        this->pax_trip_dist[i] = std::stod(elems[2]);
+
+        // Si la distanci del viaje es 0, se suma un epsilon
+        if (std::stod(elems[2]) < epsilon) {
+            this->pax_trip_dist[i] = std::stod(elems[2]) + epsilon;
+        } else {
+            this->pax_trip_dist[i] = std::stod(elems[2]);
+        }
         this->pax_tot_fare[i] = std::stod(elems[3]);
     }
 
@@ -60,7 +67,6 @@ void TaxiAssignmentInstance::ReadFromFile(std::string filename) {
         split(line, delim, elems);
 
         for (int j = 0; j < this->n; j++) {
-            // TODO: IF DIST == 0 ADD EPSILON
             this->dist[i][j] = std::stod(elems[j]);
         }
     }

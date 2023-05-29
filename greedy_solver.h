@@ -21,7 +21,7 @@ class GreedySolver
         TaxiAssignmentSolution getSolution() const;
         int getSolutionStatus() const;
         double getSolutionTime() const;
-        double getPrecioKm() const;
+        double getDolarKm() const;
         
 	
 	private:
@@ -30,7 +30,7 @@ class GreedySolver
         double _objective_value;
         int _solution_status;
         double _solution_time;
-        double _precio_km;
+        std::vector<double> _ratio_precio_km;
 
 };
 

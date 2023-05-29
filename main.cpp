@@ -3,6 +3,7 @@
 #include "checker.h"
 #include "greedy_solver.h"
 #include "taxi_assignment_batching_solver.h"
+#include "taxi_assignment_batching_solver_ratio.h"
 #include <fstream>
 
 
@@ -16,7 +17,7 @@ int main(int argc, char** argv) {
     
     // Open file and write header
     file.open ("results.csv");
-    file << "size,n,timeG,timeB,ObjValG,ObjValB,PrecioKmG,PrecioKmB" << std::endl; 
+    file << "size,n,timeG,timeB,ObjValG,ObjValB,ObjValBR,PrecioKmG,PrecioKmB,PrecioKmBRatio" << std::endl; 
 
     TaxiAssignmentInstance instance;
 
@@ -28,10 +29,12 @@ int main(int argc, char** argv) {
             instance = TaxiAssignmentInstance(filename);
 
             BatchingSolver batchingSolver(instance);
+            BatchingSolverRatio batchingSolverRatio(instance);
             GreedySolver greedySolver(instance);
 
             // Solve instance with each algorithm
             batchingSolver.solve();
+            batchingSolverRatio.solve();
             greedySolver.solve();
 
             TaxiAssignmentSolution solutionBatching = batchingSolver.getSolution();
@@ -41,20 +44,13 @@ int main(int argc, char** argv) {
 
             // Write results into the file
             file << n_sizes[j] << "," <<instance.n << "," << greedySolver.getSolutionTime() << "," << batchingSolver.getSolutionTime()
-            << "," << greedySolver.getObjectiveValue() << "," <<batchingSolver.getObjectiveValue() 
-            << "," << greedySolver.getPrecioKm() << "," << batchingSolver.getKmDolar()
+            << "," << greedySolver.getObjectiveValue() << "," <<batchingSolver.getObjectiveValue() << ',' << batchingSolverRatio.getObjectiveValue()
+            << "," << greedySolver.getDolarKm() << "," << batchingSolver.getDolarKm() << ',' << batchingSolverRatio.getDolarKm()
             << std::endl;
         }
     }
 
     file.close();
-
-
-    // TaxiAssignmentInstance instance;
-    // std::string filename = "input/test.csv";
-    // instance = TaxiAssignmentInstance(filename);
-    // BatchingSolver batchingSolver(instance);
-    // batchingSolver.solve();
 
 
     return 0;

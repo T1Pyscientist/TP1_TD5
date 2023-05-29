@@ -10,7 +10,7 @@ GreedySolver::GreedySolver(TaxiAssignmentInstance &instance) {
     this->_objective_value = 0;
     this->_solution_status = 0;
     this->_solution_time = 0;
-    this->_precio_km = 0;
+    this->_ratio_precio_km = std::vector<double>(this->_instance.n);
 }
 
 void GreedySolver::setInstance(TaxiAssignmentInstance &instance) {
@@ -54,7 +54,7 @@ void GreedySolver::solve() {
 
         // Set metrics of the assignment  
         this->_objective_value += min_dist;
-        this->_precio_km += (min_dist / this->_instance.pax_tot_fare[j]);
+        this->_ratio_precio_km[closest_car] = this->_instance.pax_tot_fare[j] / (min_dist + this->_instance.pax_trip_dist[j]);
     }
 
     // Final execution time
@@ -87,8 +87,14 @@ double GreedySolver::getSolutionTime() const {
     return this->_solution_time;
 }
 
-double GreedySolver::getPrecioKm() const{
-    return this->_precio_km / this->_instance.n;
+double GreedySolver::getDolarKm() const{
+    
+     double total = 0;
+     for (int j=0; j<this->_instance.n; j++){
+        total += this->_ratio_precio_km[j];
+     }
+
+    return total / this->_instance.n;
 }
 
 

@@ -1,9 +1,9 @@
-#include "taxi_assignment_batching_solver.h"
+#include "taxi_assignment_batching_solver_ratio.h"
 
 
-BatchingSolver::BatchingSolver() {}
+BatchingSolverRatio::BatchingSolverRatio() {}
 
-BatchingSolver::BatchingSolver(TaxiAssignmentInstance &instance) {
+BatchingSolverRatio::BatchingSolverRatio(TaxiAssignmentInstance &instance) {
     this->_instance = instance;
     this->_objective_value = 0;
     this->_solution_status = 0;
@@ -11,24 +11,23 @@ BatchingSolver::BatchingSolver(TaxiAssignmentInstance &instance) {
     this->_ratio_precio_km = std::vector<double>(this->_instance.n);
 }
 
-void BatchingSolver::setInstance(TaxiAssignmentInstance &instance) {
+void BatchingSolverRatio::setInstance(TaxiAssignmentInstance &instance) {
     this->_instance = instance;
 }
 
-void BatchingSolver::solve() {
+void BatchingSolverRatio::solve() {
 
     auto start = std::chrono::high_resolution_clock::now();
     this->_solution = TaxiAssignmentSolution(this->_instance.n);
 
     // Create the network flow instance.
-    this->_createMinCostFlowNetwork2();
+    this->_createMinCostFlowNetworkRatio();
+
 
     // Compute the solution for min cost flow
     this->_solution_status = this->_min_cost_flow.Solve();
 
     if (this->_solution_status == operations_research::MinCostFlow::OPTIMAL) {
-        this->_objective_value = double((this->_min_cost_flow.OptimalCost())/10);
-
         
         for (int i = 0; i < this->_min_cost_flow.NumArcs(); ++i) {
             int64_t flow = this->_min_cost_flow.Flow(i);
@@ -37,6 +36,7 @@ void BatchingSolver::solve() {
             int car = this->_min_cost_flow.Tail(i)-1;
             int request = this->_min_cost_flow.Head(i)-this->_instance.n-1;
             this->_solution.assign(car, request);
+            this->_objective_value += this->_instance.dist[car][request];
             this->_ratio_precio_km[car] = this->_instance.pax_tot_fare[request] / (this->_instance.dist[car][request] + this->_instance.pax_trip_dist[request]);
         }
     } else {
@@ -53,23 +53,23 @@ void BatchingSolver::solve() {
 
 }
 
-double BatchingSolver::getObjectiveValue() const {
+double BatchingSolverRatio::getObjectiveValue() const {
     return this->_objective_value;
 }
 
-TaxiAssignmentSolution BatchingSolver::getSolution() const {
+TaxiAssignmentSolution BatchingSolverRatio::getSolution() const {
     return this->_solution;
 }
 
-int BatchingSolver::getSolutionStatus() const {
+int BatchingSolverRatio::getSolutionStatus() const {
     return this->_solution_status;
 }
 
-double BatchingSolver::getSolutionTime() const {
+double BatchingSolverRatio::getSolutionTime() const {
     return this->_solution_time;
 }
 
-double BatchingSolver::getDolarKm() const  {
+double BatchingSolverRatio::getDolarKm() const  {
 
      double total = 0;
      for (int j=0; j<this->_instance.n; j++){
@@ -79,53 +79,7 @@ double BatchingSolver::getDolarKm() const  {
     return total / this->_instance.n;
 }
 
-void BatchingSolver::_createMinCostFlowNetwork() {
-
-    // Initialize graph structures.
-    int n = this->_instance.n;
-    std::vector<int64_t> start_nodes(n*n, -1);
-    std::vector<int64_t> end_nodes(n*n, -1);
-    std::vector<int64_t> capacities(n*n, 1);
-    std::vector<int64_t> unit_costs(n*n, -1);
-
-    // Complete the graph structures. 
-    // Origin vertices (taxis) indexed from 0...n-1. 
-    // Destination vertices (paxs) indexed from n...2n-1
-    // unit_cost of (i,j) = dist[i][j]
-    int cnt = 0;
-    for (int i = 0; i < this->_instance.n; i++) {
-        for (int j = this->_instance.n; j < 2*this->_instance.n; j++) {
-            // capacities are always 1, defined when initialized.
-            start_nodes[cnt] = i;
-            end_nodes[cnt] = j;
-            unit_costs[cnt] = 10*this->_instance.dist[i][j - n];
-            cnt++;
-        }
-    }
-
-    // Create the supplies.
-    // supplies[i] = 1 for taxis, i = 0,...,n-1.
-    // supplies[i] = -1 for paxs, i = n,...,2n-1.
-    std::vector<int64_t> supplies(2*n, 0);
-    for (int i = 0; i < this->_instance.n; i++) {
-        supplies[i] = 1;
-        supplies[n + i] = -1;
-    }
-
-    // Create the digraph
-    // Add each arc.
-    for (int i = 0; i < start_nodes.size(); ++i) {
-        int arc = this->_min_cost_flow.AddArcWithCapacityAndUnitCost(start_nodes[i], end_nodes[i], capacities[i], unit_costs[i]);
-        if (arc != i) LOG(FATAL) << "Internal error";
-    }
-
-    // Add node supplies.
-    for (int i = 0; i < supplies.size(); ++i) {
-        this->_min_cost_flow.SetNodeSupply(i, supplies[i]);
-    }
-}
-
-void BatchingSolver::_createMinCostFlowNetwork2() {
+void BatchingSolverRatio::_createMinCostFlowNetworkRatio() {
     // Creates a network flow with source and sink nodes
 
     int n = this->_instance.n;
@@ -157,7 +111,7 @@ void BatchingSolver::_createMinCostFlowNetwork2() {
             start_nodes[arc_index] = i+1;
             end_nodes[arc_index] = j+1;
             // cost x10 to compute with integers
-            unit_costs[arc_index] = 10*this->_instance.dist[i][j - n];
+            unit_costs[arc_index] = int(-100*(this->_instance.pax_tot_fare[j-n] / (this->_instance.dist[i][j - n] + this->_instance.pax_trip_dist[j-n])));
             arc_index++;
         }
     }
