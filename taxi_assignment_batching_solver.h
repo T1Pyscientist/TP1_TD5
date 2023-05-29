@@ -30,6 +30,7 @@ class BatchingSolver
         // Completar con lo que sea necesario.
         operations_research::SimpleMinCostFlow _min_cost_flow;
         void _createMinCostFlowNetwork();
+        void _createMinCostFlowNetwork2();
 
 
         // Instance, problem and results attributes

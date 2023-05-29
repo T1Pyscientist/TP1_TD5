@@ -47,5 +47,13 @@ int main(int argc, char** argv) {
 
     file.close();
 
+    
+    // TaxiAssignmentInstance instance;
+    // std::string filename = "input/test.csv";
+    // instance = TaxiAssignmentInstance(filename);
+    // BatchingSolver batchingSolver(instance);
+    // batchingSolver.solve();
+
+
     return 0;
 }
