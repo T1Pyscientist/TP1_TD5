@@ -23,7 +23,7 @@ int main(int argc, char** argv) {
     for (int j = 0; j < n_sizes.size(); j++) {
         for(int i=0; i<10; i++) 
         {
-            // Create an instance with of the problem
+            // Create an instance of the problem for the current file
             std::string filename = "input/" + n_sizes[j] + "_" + std::to_string(i) + ".csv";
             instance = TaxiAssignmentInstance(filename);
 
@@ -37,6 +37,8 @@ int main(int argc, char** argv) {
             TaxiAssignmentSolution solutionBatching = batchingSolver.getSolution();
             TaxiAssignmentSolution solutionGreedy = greedySolver.getSolution();
 
+            // TODO: CHECK SOLUTIONS WITH CHECKER CLASS??
+
             // Write results into the file
             file << n_sizes[j] << "," <<instance.n << "," << greedySolver.getSolutionTime() << "," << batchingSolver.getSolutionTime()
             << "," << greedySolver.getObjectiveValue() << "," <<batchingSolver.getObjectiveValue() 
@@ -47,7 +49,7 @@ int main(int argc, char** argv) {
 
     file.close();
 
-    
+
     // TaxiAssignmentInstance instance;
     // std::string filename = "input/test.csv";
     // instance = TaxiAssignmentInstance(filename);

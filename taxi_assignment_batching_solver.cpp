@@ -20,32 +20,18 @@ void BatchingSolver::solve() {
     auto start = std::chrono::high_resolution_clock::now();
     this->_solution = TaxiAssignmentSolution(this->_instance.n);
 
-    // Create the min cost network flow instance.
+    // Create the network flow instance.
     this->_createMinCostFlowNetwork2();
 
-    // Obtain the solve the problem.
+    // Compute the solution for min cost flow
     this->_solution_status = this->_min_cost_flow.Solve();
-
-    // // Obtain the solution, construct the corresponding object and record the desired parameters.
-    // if (this->_solution_status == operations_research::MinCostFlow::OPTIMAL) {
-    //     this->_objective_value = double((this->_min_cost_flow.OptimalCost())/10);
-        
-    //     for (int i = 0; i < this->_min_cost_flow.NumArcs(); ++i) {
-    //         int64_t flow = this->_min_cost_flow.Flow(i);
-    //         if (flow == 0) continue;
-    //         this->_solution.assign(this->_min_cost_flow.Tail(i), this->_min_cost_flow.Head(i)-this->_instance.n);
-    //         this->_km_dolar += this->_instance.dist[this->_min_cost_flow.Tail(i)][this->_min_cost_flow.Head(i)-this->_instance.n] / this->_instance.pax_tot_fare[this->_min_cost_flow.Head(i)-this->_instance.n];
-    //     }
-    // } else {
-    //     std::cout << "Solving the min cost flow problem failed. Solver status: "
-    //             << this->_solution_status << std::endl;
-    // }
 
     if (this->_solution_status == operations_research::MinCostFlow::OPTIMAL) {
         this->_objective_value = double((this->_min_cost_flow.OptimalCost())/10);
         
         for (int i = 0; i < this->_min_cost_flow.NumArcs(); ++i) {
             int64_t flow = this->_min_cost_flow.Flow(i);
+            // Ignore arcs with flow 0 (no assignment) and unit cost 0 (arcs from source and sink nodes)
             if (flow == 0 || _min_cost_flow.UnitCost(i) ==0) continue;
             this->_solution.assign(this->_min_cost_flow.Tail(i)-1, this->_min_cost_flow.Head(i)-this->_instance.n-1);
             // this->_km_dolar += this->_instance.dist[this->_min_cost_flow.Tail(i)][this->_min_cost_flow.Head(i)-this->_instance.n] / this->_instance.pax_tot_fare[this->_min_cost_flow.Head(i)-this->_instance.n];
@@ -54,9 +40,6 @@ void BatchingSolver::solve() {
         std::cout << "Solving the min cost flow problem failed. Solver status: "
                 << this->_solution_status << std::endl;
     }
-
-
-
 
     // Registrar el tiempo de finalización
     auto end = std::chrono::high_resolution_clock::now();
@@ -134,12 +117,13 @@ void BatchingSolver::_createMinCostFlowNetwork() {
 }
 
 void BatchingSolver::_createMinCostFlowNetwork2() {
+    // Creates a network flow with source and sink nodes
 
-    // Initialize graph structures.
     int n = this->_instance.n;
     int total_arcs = n*n + (2*n);
     int total_nodes = 2*n + 2;
 
+    // Initialize graph structures.
     std::vector<int64_t> start_nodes(total_arcs, -1);
     std::vector<int64_t> end_nodes(total_arcs, -1);
     std::vector<int64_t> capacities(total_arcs, 1);
@@ -147,10 +131,12 @@ void BatchingSolver::_createMinCostFlowNetwork2() {
 
     // Arcs from source node to cars, and  requests to sink node 
     for (int i=0; i < n; i++){
+        // source -> cars
         start_nodes[i] = 0;
-        end_nodes[i] = i + 1;
+        end_nodes[i] = i + 1; // Offset 1 bc of source node
 
-        start_nodes[total_arcs - n + i] = n + i +1;
+        // requests -> sink
+        start_nodes[total_arcs - n + i] = (n+1) + i ; // Offset (n+1) bc of source node and n car nodes
         end_nodes[total_arcs - n + i] = total_nodes - 1;
     }
 

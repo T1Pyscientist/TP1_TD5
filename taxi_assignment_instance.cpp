@@ -60,6 +60,7 @@ void TaxiAssignmentInstance::ReadFromFile(std::string filename) {
         split(line, delim, elems);
 
         for (int j = 0; j < this->n; j++) {
+            // TODO: IF DIST == 0 ADD EPSILON
             this->dist[i][j] = std::stod(elems[j]);
         }
     }
