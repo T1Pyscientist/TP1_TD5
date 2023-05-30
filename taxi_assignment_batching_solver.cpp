@@ -27,7 +27,7 @@ void BatchingSolver::solve() {
     this->_solution_status = this->_min_cost_flow.Solve();
 
     if (this->_solution_status == operations_research::MinCostFlow::OPTIMAL) {
-        this->_objective_value = double((this->_min_cost_flow.OptimalCost())/10);
+        this->_objective_value = double((this->_min_cost_flow.OptimalCost()))/10;
 
         
         for (int i = 0; i < this->_min_cost_flow.NumArcs(); ++i) {
