@@ -17,7 +17,7 @@ int main(int argc, char** argv) {
     
     // Open file and write header
     file.open ("results.csv");
-    file << "size,n,timeG,timeB,ObjValG,ObjValB,ObjValBR,PrecioKmG,PrecioKmB,PrecioKmBRatio" << std::endl; 
+    file << "size,n,timeG,timeB,timeBR,ObjValG,ObjValB,ObjValBR,PrecioKmG,PrecioKmB,PrecioKmBRatio" << std::endl; 
 
     TaxiAssignmentInstance instance;
 
@@ -43,7 +43,7 @@ int main(int argc, char** argv) {
             // TODO: CHECK SOLUTIONS WITH CHECKER CLASS??
 
             // Write results into the file
-            file << n_sizes[j] << "," <<instance.n << "," << greedySolver.getSolutionTime() << "," << batchingSolver.getSolutionTime()
+            file << n_sizes[j] << "," <<instance.n << "," << greedySolver.getSolutionTime() << "," << batchingSolver.getSolutionTime() << "," << batchingSolverRatio.getSolutionTime()
             << "," << greedySolver.getObjectiveValue() << "," <<batchingSolver.getObjectiveValue() << ',' << batchingSolverRatio.getObjectiveValue()
             << "," << greedySolver.getDolarKm() << "," << batchingSolver.getDolarKm() << ',' << batchingSolverRatio.getDolarKm()
             << std::endl;
