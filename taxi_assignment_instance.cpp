@@ -51,7 +51,7 @@ void TaxiAssignmentInstance::ReadFromFile(std::string filename) {
         split(line, delim, elems);
         this->pax_position[i] = std::make_pair<double, double>(std::stod(elems[0]), std::stod(elems[1]));
 
-        // Si la distanci del viaje es 0, se suma un epsilon
+        // Si la distancia del viaje es 0, se suma un epsilon
         if (std::stod(elems[2]) < epsilon) {
             this->pax_trip_dist[i] = std::stod(elems[2]) + epsilon;
         } else {
